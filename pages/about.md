@@ -6,9 +6,12 @@ feature-img: "assets/img/pexels/circuit.jpeg"
 tags: [About, Archive]
 ---
 
-Type on Strap is based on Type Theme, a free and open-source theme for [Jekyll](http://jekyllrb.com/), licensed under the MIT License.
+## Welcome to Team Lighthorse!
 
-Head over to the [theme's documentation](https://github.io/sylhare/Type-on-Strap) for much more information about Type on Strap or to install this theme on your own Jekyll site.
+We are the "Cloud Team" at Dayton Freight Lines, Inc. We build modern apps using technologies such as: Angular, .NET Core, Azure, Docker, and Kubernetes. 
+<!--more-->
+We are hoping to use this blog as a medium for sharing our knowledge and experiences in the hope that it benefits others who are working on the same types of things that we work with.
 
-This file is an example of a page in Jekyll, that automatically shows up in the header navigation, you can delete or modify this file freely.
- 
+So look around, read some posts, and hit us up on social media and let us know what you think!
+
+#neversayneigh

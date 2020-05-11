@@ -1,13 +1,13 @@
 # Icons on the footer
 rss: true
-email_address:    # Full email address, e.g. "sam@example.com"
+email_address: "cloudteamdev@daytonfreight.com"    # Full email address, e.g. "sam@example.com"
 behance:
 bitbucket:
 dribbble:
 facebook:
 flickr:
 gitlab:
-github: "sylhare"
+github: "teamlighthorse"
 instagram:
 keybase:
 linkedin:         # Full URL
@@ -18,7 +18,7 @@ stack_overflow:
 stack_exchange:   # Full URL
 steam:
 tumblr:
-twitter:          # "twitter username"
+twitter: "@therealdenster"         # "twitter username"
 vimeo:
 wordpress:
 youtube:          # Youtube channel token like: UCqECaJ8Gagnn7YCbPEzWH6g
@@ -29,12 +29,12 @@ feed:
 
 # Share button options
 share:
-  facebook: true
+  facebook: 
   twitter: true
   tumblr:
   pinterest:
   pocket:
-  reddit: true
+  reddit: 
   linkedin:
   wordpress:
   email: true
