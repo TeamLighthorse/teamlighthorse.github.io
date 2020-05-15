@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "jekyll serve",
+            "type": "shell",
+            "command": "docker run -it --rm --volume=%CD%:/srv/jekyll -p 4000:4000 jekyll/jekyll jekyll serve --force_polling",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
