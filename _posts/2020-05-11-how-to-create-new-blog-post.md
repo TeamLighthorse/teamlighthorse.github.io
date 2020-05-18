@@ -1,7 +1,7 @@
 ---
 layout: post
 title: How to create a new blog post
-tags: [lighthorse, new blog post]
+tags: [lighthorse, new blog post, introduction, neversayneigh]
 excerpt_separator: <!--more-->
 author: footedr
 ---
