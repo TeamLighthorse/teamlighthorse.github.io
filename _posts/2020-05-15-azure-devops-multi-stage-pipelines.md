@@ -36,7 +36,7 @@ most common type of trigger is a
 When defining a push trigger, you provide a list of branches from your source code repo.  Whenever changes are pushed
 to any of those branches, the pipeline will be executed.
 
-The `trigger` section for a pipeline will often look like:
+The `trigger` section for a pipeline may look something like:
 
 ```yaml
 trigger:
@@ -85,17 +85,18 @@ For example, you might have a step to build a docker file that references the `d
 
 ## stages
 
-If you are familiar with the YAML build offering in Azure DevOps, none of the above is new.  The
-addition of the `stages` section takes that YAML build foundation and extends it to a more complete
-CI/CD solution.
+YAML *builds* have been available for awhile now, so you may have already been exposed to some of
+the above YAML schema and syntax through that feature in Azure Pipelines.  Multi-stage YAML pipelines
+take that same YAML foundation and add a new section to it, `stages`.  By introducing `stages`, you
+can take a automated build process and turn it into a more complete CI/CD solution.
 
 `stages` live at the top of a 3 tiered hierarchy.  A pipeline can have 1 or more `stages`.  Each
 stage can have one or more `jobs`.  Each job can have one or more `steps`.  The `stages` in your
 pipeline should reflect the stages in your devops process for implementing and releasing changes.
-In our case, the stages in our process are Build -> QA -> Staging -> Production -> Demo.  Every
+In our case, the stages in our process are Build > QA > Staging > Production > Demo.  Every
 change to our applications goes through these stages on the way to release.
 
-> What is the point of having `stages` and `jobs`?  A `stage` can have multiple `jobs`, though
+> What is the difference between `stages` and `jobs`?  A stage can have multiple jobs, though
 > it is common for a stage to only have a single job.  One reason you might split a stage into
 > multiple jobs is because jobs within a stage can execute concurrently.  For instance, if you
 > have multiple independent builds that need to complete to prepare a release, you could define
@@ -117,21 +118,63 @@ stages:
     steps:
     - script: |
         docker build -f $(dockerFile) -t build --target build .
-      displayName: 'Run build stage from dockerfile.'
+      displayName: 'Build Application'
 
     - script: |
         docker build -f $(dockerFile) -t test --target test .
-      displayName: 'Run test stage from dockerfile.'
+      displayName: 'Run Tests'
 
     - script: |
         docker build -f $(dockerFile) -t commodities:$(Build.SourceBranchName)$(Build.BuildId) --target final .
-      displayName: 'Publish website.'
+      displayName: 'Prepare Release'
+      condition: ne(variables['Build.SourceBranchName'], 'merge')
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+      displayName: 'Push container to registry'
       condition: ne(variables['Build.SourceBranchName'], 'merge')
 ```
 
-The Build `stage` has a single `job`, also called Build.  The Build `job` consists of 3 `steps` to build, test,
-and publish the website for this project.  The specifics of your steps will vary across projects.  There are
-a couple of Azure Pipeline details in this example that are worth calling out.
+The Build `stage` has a single `job`, also called Build.  This Build `job` consists of 4 `steps` to
+build the application, run tests, prepare a release, and push the generated container to a container
+registry.
+
+Lets unpack this a little.  The first 3 steps in this job describe `scripts` to run.  These
+scripts are executed on the command line of the
+[pipeline agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=browser).
+
+> By default, a pipeline will run in a virtual machine on a
+> [Microsoft-hosted agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops).
+> At the time of this writing, the default VM is based on Ubuntu 16.04 (xenial).  If you want to use a 
+> different VM image, you can modify your `job` definition to specify which image you want to use:
+>
+> ```yaml
+>   jobs:
+>   - job: Build
+>     pool:
+>       vmImage: 'windows-2019'
+>     steps: ...   
+>
+> ```
+>
+> In the above example, Azure Pipelines would run the Build job using a Windows 2019 VM instead of
+> Ubuntu.  Knowing what VM your agent is running can be important because different VM images will
+> have different tools included.
+>
+> For example, when running a powershell task from ubuntu 16.04, the
+> `Invoke-SqlCmd` cmdlet is not available.  It is available when using the Windows 2019 VM image.
+> [This page](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops)
+> includes information about which images are available for Microsoft-hosted agents, with links to
+> what software is inlcuded in each image.
+
+The last step for the sample Build job runs a
+[Built-in task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/?view=azure-devops).
+Built-in tasks are available for all sorts of common CI/CD tasks such as packaging/publishing
+artifacts and integrating with external services.
+
 
 ```yaml
 ...
