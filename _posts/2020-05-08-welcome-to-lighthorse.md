@@ -3,6 +3,7 @@ layout: post
 title: Welcome to Lighthorse!
 tags: [lighthorse, introduction, neversayneigh]
 excerpt_separator: <!--more-->
+author: footedr
 ---
 
 ## Welcome to Team Lighthorse!

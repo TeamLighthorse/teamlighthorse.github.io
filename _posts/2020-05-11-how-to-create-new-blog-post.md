@@ -3,6 +3,7 @@ layout: post
 title: How to create a new blog post
 tags: [lighthorse, new blog post]
 excerpt_separator: <!--more-->
+author: footedr
 ---
 
 This post will walk you through creating a new Team Lighthorse blog entry.

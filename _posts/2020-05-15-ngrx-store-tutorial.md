@@ -3,6 +3,7 @@ layout: post
 title: NgRx Store Tutorial - Recipe Book
 tags: [lighthorse, new blog post]
 excerpt_separator: <!--more-->
+author: matthews58
 ---
 
 This post will walk you through creating a new Angular Project using NgRx Store.
