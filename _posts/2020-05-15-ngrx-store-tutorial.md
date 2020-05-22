@@ -98,7 +98,6 @@ export class Ingredient {
 }
 ```
 
-
 - `ng g class recipe`
 
 ```ts
