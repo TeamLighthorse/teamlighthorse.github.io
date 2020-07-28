@@ -96,6 +96,25 @@
         transform: scale(1.1);
       }
     }
+
+    &.pinned {
+      background-color: lightgrey;
+
+      header {
+        position: relative;
+
+        h1:before {
+          font-family: FontAwesome;
+          content: '\f08d';
+          position: absolute;
+          left: -30px;
+          font-size: 30px;
+          color: indianred;
+          transform: rotate(-30deg);
+        }
+      }
+
+    }
   }
 
   .excerpt {
