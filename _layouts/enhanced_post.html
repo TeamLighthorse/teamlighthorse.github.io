@@ -1,0 +1,43 @@
+---
+layout: default
+comments: true
+---
+{% include share_thumbnail.html page=page %}
+
+<article {% if page.feature-img or page.color %} class="feature-image" {% endif %}>
+    <header id="main">
+        {% unless page.hide_title %}
+        <h1 id="{{ page.title | cgi_escape }}" class="title">{{ page.title }}</h1>
+        {% include post_info.html author=page.author date=page.date %}
+        {% endunless %}
+    </header>
+    <section class="post-content">
+        {% if page.bootstrap %}
+        <div class="bootstrap-iso">
+            {% endif %}
+            {{ content }}
+            {% if page.bootstrap %}
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Social media shares -->
+    {% include share_buttons.html %}
+
+    <!-- Tag list -->
+    {% capture tag_list %}{{ page.tags | join: "|"}}{% endcapture %}
+    {% include tags_list.html tags=tag_list %}
+
+</article>
+
+<!-- Post navigation -->
+{% if site.post_navigation or site.theme_settings.post_navigation %}
+{% include post_nav.html %}
+{% endif %}
+
+<!-- Disqus -->
+{% if site.use_disqus %}
+<div class="comments">
+    {% include disqus.html %}
+</div>
+{% endif %}
