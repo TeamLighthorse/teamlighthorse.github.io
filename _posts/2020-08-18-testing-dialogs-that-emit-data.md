@@ -42,31 +42,31 @@ Our template contains an *ngFor directive that loops through the line items and 
     <div class="lh-tile__header clearfix"
       *ngIf="(numItems > 1) && isEditable">
       <button mat-icon-button
-		class="float-right">
-		<mat-icon class="lh-tile__icon"
-		  (click)="openDeleteLineItemsDialog(lineItem)">
-		  clear
-		</mat-icon>
-	  </button>
-	</div>
-	<div class="lh-tile__content"
-	  (click)="openEditLineItemsDialog(lineItem)">
-	  <ul class="lh-tile__description">
-	    <li class="lh-tile__title">
-		  {{ lineItem.description }}
-		</li>
-		<li>
-		  Class {{ lineItem.class }}
-		  <mat-icon class="lh-tile__icon"
-		    *ngIf="lineItem.isHazardous"
-			color="accent">
-			warning
-		  </mat-icon>
-		</li>
-		<li>{{ lineItem.weight }} lbs, {{ lineItem.handlingUnits }} H/U</li>
-		<li [innerHTML]="displayDimensions(lineItem.dimensions)"></li>
-	  </ul>
-	</div>
+        class="float-right">
+        <mat-icon class="lh-tile__icon"
+          (click)="openDeleteLineItemsDialog(lineItem)">
+          clear
+        </mat-icon>
+      </button>
+    </div>
+    <div class="lh-tile__content"
+      (click)="openEditLineItemsDialog(lineItem)">
+      <ul class="lh-tile__description">
+        <li class="lh-tile__title">
+          {% raw %}{{ lineItem.description }}{% endraw %}
+        </li>
+        <li>
+          Class {% raw %}{{ lineItem.class }}{% endraw %}
+          <mat-icon class="lh-tile__icon"
+            *ngIf="lineItem.isHazardous"
+            color="accent">
+            warning
+          </mat-icon>
+        </li>
+        <li>{% raw %}{{ lineItem.weight }}{% endraw %} lbs, {% raw %}{{ lineItem.handlingUnits }}{% endraw %} H/U</li>
+        <li [innerHTML]="displayDimensions(lineItem.dimensions)"></li>
+      </ul>
+    </div>
   </div>
 </div>
 ```
