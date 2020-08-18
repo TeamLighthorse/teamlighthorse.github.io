@@ -9,6 +9,7 @@ author: docHologram
 ## What's the story, morning glory?
 
 Unit testing involving a component's complimentary dialog component can be tricky, especially when we are expecting the component to react to an emission from that dialog. While such testing is technically, integration testing, it is no less important considering that so much of Lighthouse involves the use of dialogs.
+<!--more-->
 
 ## Let's go off on a tangent first
 
