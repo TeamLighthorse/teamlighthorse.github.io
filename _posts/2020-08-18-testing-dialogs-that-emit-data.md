@@ -37,37 +37,37 @@ Our template contains an *ngFor directive that loops through the line items and 
 
 ```
 <div class="lh-tile-row">
-	<div class="card lh-tile"
-		*ngFor="let lineItem of lineItems; index as i; count as numItems">
-		<div class="lh-tile__header clearfix"
-			*ngIf="(numItems > 1) && isEditable">
-			<button mat-icon-button
-				class="float-right">
-				<mat-icon class="lh-tile__icon"
-					(click)="openDeleteLineItemsDialog(lineItem)">
-					clear
-				</mat-icon>
-			</button>
-		</div>
-		<div class="lh-tile__content"
-			(click)="openEditLineItemsDialog(lineItem)">
-			<ul class="lh-tile__description">
-				<li class="lh-tile__title">
-					{{ lineItem.description }}
-				</li>
-				<li>
-					Class {{ lineItem.class }}
-					<mat-icon class="lh-tile__icon"
-						*ngIf="lineItem.isHazardous"
-						color="accent">
-						warning
-					</mat-icon>
-				</li>
-				<li>{{ lineItem.weight }} lbs, {{ lineItem.handlingUnits }} H/U</li>
-				<li [innerHTML]="displayDimensions(lineItem.dimensions)"></li>
-			</ul>
-		</div>
+  <div class="card lh-tile"
+    *ngFor="let lineItem of lineItems; index as i; count as numItems">
+    <div class="lh-tile__header clearfix"
+      *ngIf="(numItems > 1) && isEditable">
+      <button mat-icon-button
+		class="float-right">
+		<mat-icon class="lh-tile__icon"
+		  (click)="openDeleteLineItemsDialog(lineItem)">
+		  clear
+		</mat-icon>
+	  </button>
 	</div>
+	<div class="lh-tile__content"
+	  (click)="openEditLineItemsDialog(lineItem)">
+	  <ul class="lh-tile__description">
+	    <li class="lh-tile__title">
+		  {{ lineItem.description }}
+		</li>
+		<li>
+		  Class {{ lineItem.class }}
+		  <mat-icon class="lh-tile__icon"
+		    *ngIf="lineItem.isHazardous"
+			color="accent">
+			warning
+		  </mat-icon>
+		</li>
+		<li>{{ lineItem.weight }} lbs, {{ lineItem.handlingUnits }} H/U</li>
+		<li [innerHTML]="displayDimensions(lineItem.dimensions)"></li>
+	  </ul>
+	</div>
+  </div>
 </div>
 ```
 
