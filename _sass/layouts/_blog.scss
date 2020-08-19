@@ -49,7 +49,7 @@
 .posts {
   .post-teaser {
     @extend %padding-post;
-    width: 100%;
+    /* width: 100%; */
     margin-bottom: 0;
     display: inline-block;
     background-size: $feature-image-size;

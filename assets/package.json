@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "update": "ncu dev -u",
-    "fix": "npm audit fix"
+    "fix": "npm audit fix",
+    "run": "bundle exec jekyll serve"
   },
   "repository": {
     "type": "git",
