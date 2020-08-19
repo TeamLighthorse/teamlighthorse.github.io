@@ -2,16 +2,11 @@
 layout: default
 ---
 
-<div class="home">
+<div class="body">
 
-  <div class="call-out"
-       style="background-image: url('{{ site.header_feature_image | relative_url }}')">
-    <h1 class="p-5"> {{ site.header_text | default: "Change <code>header_text</code> in <code>_config.yml</code>"}} </h1>
-  </div>
+  {% include header.html %}
 
-  <main class="fluid-container">
-    {% include blog.html %}
-  </main>
+  {% include blog.html %}
     
 </div>
 
