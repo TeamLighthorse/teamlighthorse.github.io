@@ -7,8 +7,8 @@ author: primarilysoftware
 ---
 As our team continues to build out a distributed micro-service based architecture, we need to ensure
 some level of consistency for the APIs that become part of this ecosystem.  Having consistent API
-standards will help to increase developer productivity while also helping to improve quality and
-robustness of API implementations.
+standards will help to improve quality and robustness of API implementations, while also helping to
+improve developer productivity.
 
 <!--more-->
 
@@ -55,4 +55,19 @@ api-version: 1.0
 ```
 
 ### Documentation
-In addition to following the above guidelines when designing and building APIs, documentation must be provided.
+While the above consistency fundamentals establish a solid foundation to build upon, our team recognizes
+the role good documentation plays in successful API integrations.
+
+> All APIs should expose a [Swagger/Open API](https://swagger.io/specification/) endpoint
+
+Over recent years, swagger has emerged as the de facto API documentation standard.  There is wide support
+for swagger across languages and toolsets that our team can leverage to accelerate development.
+
+> All APIs should expose an interactive UI to browse documents and test APIs such as
+> [Swagger UI](https://swagger.io/tools/swagger-ui/)
+
+As our application becomes more distributed, we are able to decouple API implementations from client applications.
+This decoupling gives our team flexibility from a development and deployment perspective.  However, deploying API
+implementations without an associated client application that can be used for integration testing can lead to
+untested code being deployed to various environments.  Having a tool such as Swagger UI at our disposal will ensure
+that we always have quick and easy way to test API implementations.
