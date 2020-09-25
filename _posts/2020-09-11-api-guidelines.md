@@ -18,7 +18,7 @@ guidelines on the [Microsoft REST API Guidelines](https://github.com/microsoft/a
 
 Microsoft has devoted [significant time and effort](https://developer.microsoft.com/en-us/office/blogs/rest-api-design-guidelines/)
 into the development of these guidelines, and continues to do so.  In addition to the guidelines
-themselves, Microsoft provides libraries and tooling for ASP.NET to help implement these guidelines,
+themselves, Microsoft provides libraries and tooling for ASP.NET Core to help implement these guidelines,
 making it a natural choice for our team.
 
 What follows is a summary of some of the areas from the Microsoft REST API Guidelines that our team
@@ -40,7 +40,7 @@ Specifically, our team has adopted the [HTTP Problem Details](https://tools.ietf
 > changes.
 
 The guidelines allow for different versioning patterns.  Our team has settled on using an `api-version` parameter
-in either the query string or as a header in the http request.
+in either the query string or as a header in the http request:
 
 ```
 https://api.contoso.com/products?api-version=1.0
@@ -56,18 +56,36 @@ api-version: 1.0
 
 ### Documentation
 While the above consistency fundamentals establish a solid foundation to build upon, our team recognizes
-the role good documentation plays in successful API integrations.
+the role good documentation plays in successful API integrations.  What follows are guidelines specific
+to documenting APIs that go beyond what is covered in the Microsoft REST API Guidelines.
 
 > All APIs should expose a [Swagger/Open API](https://swagger.io/specification/) endpoint
 
-Over recent years, swagger has emerged as the de facto API documentation standard.  There is wide support
-for swagger across languages and toolsets that our team can leverage to accelerate development.
+Over recent years, swagger has emerged as the de facto standard for API documentation.  There is wide support
+for swagger across languages and toolsets that our team can leverage to quickly generate swagger files
+from source code.
 
-> All APIs should expose an interactive UI to browse documents and test APIs such as
+> All APIs should expose an interactive UI to browse and test API endpoints such as
 > [Swagger UI](https://swagger.io/tools/swagger-ui/)
 
 As our application becomes more distributed, we are able to decouple API implementations from client applications.
 This decoupling gives our team flexibility from a development and deployment perspective.  However, deploying API
-implementations without an associated client application that can be used for integration testing can lead to
-untested code being deployed to various environments.  Having a tool such as Swagger UI at our disposal will ensure
-that we always have quick and easy way to test API implementations.
+implementations without an associated client application to test with can allow bugs to creep into our deployed
+environments.  Having a tool such as Swagger UI at our disposal will ensure
+that we always have a quick and easy way to independently test API implementations, helping to catch issues sooner
+in the development process.
+
+> Documentation for an API endpoint should include realistic sample requests and responses
+
+Many endpoints, in particular endpoints for POSTing new records, can require relatively large JSON objects.
+Having to manually craft valid JSON data for large objects can be tedious, and serve as a barrier to
+testing.  Our API documentation should provide good sample requests with valid JSON data that can be used
+to successfully invoke the associated API with little to no modifications.
+
+> Documentation for an API endpoint should provide a good description
+
+In addition to using URLs that are easy to read and construct, API documentation should
+include a brief description of what each endpoint does.  While most developers would be able to
+infer the intent of an endpoint from an HTTP Verb + URL (like `POST /api/shipments`), having plain english
+description of the API endpoint can go a long way to making an API's capabilities discoverable to more
+than just developers (prefer something like `POST /api/shipments - Create a new shipment`.
