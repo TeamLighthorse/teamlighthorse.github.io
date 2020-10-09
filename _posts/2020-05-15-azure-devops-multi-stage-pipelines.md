@@ -8,7 +8,6 @@ excerpt_separator: <!--more-->
 Effective DevOps processes are built upon a handful of key practices:
 - Continuous Integration (CI)
 - Continuous Delivery (CD)
-- Microservices
 - Infrastructure as Code
 - Monitoring and Logging
 - Communication and Collaboration
@@ -86,7 +85,7 @@ For example, you might have a step to build a docker file that references the `d
 ## stages
 
 You may be familiar with many of the above concepts if you have used YAML *builds* in Azure DevOps.
-Multi-stage YAML pipelines take that same YAML foundation and add a new section to it, `stages`.
+Multi-stage YAML pipelines take that same YAML foundation and extends it with a new building block, `stages`.
 By introducing `stages`, you can take a automated build process and turn it into a more complete
 CI/CD solution.
 
@@ -94,18 +93,19 @@ CI/CD solution.
 stage can have one or more `jobs`.  Each job can have one or more `steps`.
 
 The `stages` in your pipeline should reflect the stages in your devops process for implementing
-and releasing changes. In our case, the stages in our process are
+and releasing changes. For our team, the stages in our process are
 Build > QA > Staging > Production > Demo.
 Every change to our applications goes through these stages on the way to completion.
 
 > What is the difference between `stages` and `jobs`?  A stage can have multiple jobs, though
 > it is common for a stage to only have a single job.  One reason you might split a stage into
 > multiple jobs is because jobs within a stage can execute concurrently.  For instance, if you
-> have multiple independent builds that need to complete to prepare a release, you could define
+> have multiple independent builds that need to complete to prepare a release (like a front-end
+> angular build, and back-end .NET build), you could define
 > separate jobs for each build and allow those jobs to execute concurrently.
 
-### Example Stage
-Extending the sample YAML file above to add a Build stage might look like:
+### Example Build Stage
+Take a look at this sample pipeline with a Build stage:
 
 ```yaml
 trigger:
@@ -141,7 +141,7 @@ stages:
       condition: ne(variables['Build.SourceBranchName'], 'merge')
 ```
 
-This Build `stage` has a single `job` (also named Build).  The Build `job` consists of 4 `steps` to
+The Build `stage` has a single `job` (also named Build).  The Build `job` consists of 4 `steps` to
 build the application, run tests, prepare a release, and push the generated container to a container
 registry.
 
@@ -176,32 +176,170 @@ scripts are executed on the command line of the
 The last step for the sample Build job runs a
 [Built-in task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/?view=azure-devops).
 Built-in tasks are available for all sorts of common CI/CD tasks such as packaging/publishing
-artifacts and integrating with external services.
+artifacts and integrating with external services.  In this case the `PublishBuildArtifacts@1` task
+is pushing the docker container produced in the prior steps to Azure Container Registry.
 
-### Multi-line Scripts
-Using `- script: |` followed by a new line is the syntax for defining multi-line scripts.  It this case
-each script is only one line, so it is just being used for readability.  As an example,  you could
-rewrite the Build job above as follows:
+> #### Multi-line Scripts
+> Using `- script: |` followed by a new line is the syntax for defining multi-line scripts.  It the Build
+> example above each script is only one line, so this syntax is just being used for readability.  You could
+> rewrite those same steps as follows:
+> 
+> ```yaml
+>     - script: |
+>         docker build -f $(dockerFile) -t build --target build .
+>         docker build -f $(dockerFile) -t test --target test .
+>         docker build -f $(dockerFile) -t commodities:$(Build.SourceBranchName)$(Build.BuildId) --target final .
+>       displayName: 'Build test and prepare the release'
+>
+>     - task: PublishBuildArtifacts@1
+>       inputs:
+>         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+>         ArtifactName: 'drop'
+>         publishLocation: 'Container'
+>       displayName: 'Push container to registry'
+>       condition: ne(variables['Build.SourceBranchName'], 'merge')
+> ```
 
-```yaml
-    - script: |
-        docker build -f $(dockerFile) -t build --target build .
-        docker build -f $(dockerFile) -t test --target test .
-        docker build -f $(dockerFile) -t commodities:$(Build.SourceBranchName)$(Build.BuildId) --target final .
-      displayName: 'Build test and prepare the release'
+### Example Release Stage
+After successfully building your application, the next thing you will generally want to do is
+release it to an environment where you can start testing.  For the release, we will add
+a 2nd Stage to the above example:
 
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
-      displayName: 'Push container to registry'
-      condition: ne(variables['Build.SourceBranchName'], 'merge')
+``` yaml
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+      ...
+- stage: QA
+  dependsOn: Build
+  condition: eq(variables['Build.SourceBranchName'], 'develop')
+  jobs:
+    ...
 ```
 
-```yaml
+Here we have added another `stage` under the `stages` section of the pipeline.  You will notice
+2 new concepts in the snippet above, `dependsOn` and `condition`.
+
+`dependsOn` allows you to declare that a stage depends on some other stage completing.  Here we
+are saying that the QA stage depends on the Build stage, meaning that the QA stage should not
+run until after the Build stage has completed.  If the Build stage fails, then we do not want
+the QA stage to execute (you would not want to deploy a broken build).
+
+`condition` allows you to control whether a given stage should execute based on some conditional
+expression.  In this case, we only want the QA stage to run if the source branch that triggered
+this pipeline execution was develop (as opposed to a PR branch, or the master branch). If this
+were the master branch, we would instead want to run a different stage to deploy the application
+to a staging or production environment.
+
+Next we need to add a job to the QA stage that contains the steps for a release:
+
+``` yaml
 ...
-- script: |
-        docker build -f $(dockerFile) -t commodities:<i>$(Build.SourceBranchName)$(Build.BuildId)</i> --target final .
+  - stage: QA
+    dependsOn: Build
+    condition: eq(variables['Build.SourceBranchName'], 'develop')
+    jobs:
+    - deployment: QA
+      environment: qa
+      pool:
+        vmImage: 'windows-2019'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              ...
+```
+
+Notice how with the Build stage, we added:
+``` yaml
+jobs:
+- job: Build
+  steps:
+    ...
+```
+
+For the release we are adding a different type of job, `deployment`:
+``` yaml
+jobs:
+- deployment: QA
+  environment: qa
+  pool:
+    vmImage: 'windows-2019'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          ...
 ...
 ```
+
+[Deployment jobs](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/deployment-jobs?view=azure-devops)
+are a special type of job with some extra features.  When a deployment job executes, Azure Pipelines
+automatically records a deployment history for you.  Additionally, when defining a deployment job, you
+can specify a
+[deployment strategy](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/deployment-jobs?view=azure-devops#deployment-strategies).
+There are currently 3 strategies available: runOnce, rolling, and canary.
+
+With deployment strategies, Azure Pipelines supports some pretty advanced scenarios, including
+pre deployment steps, routing traffic before and after deployments, and steps to take to rollback
+in the event of a failure.  In this case, we are going to keep it simple and use a very basic
+`runOnce` strategy.
+
+The steps in a deployment can use all the same tasks that you can use in any other job, including
+scripts. Just as an example, here is what a deployment to a kubernetes cluster might look like:
+
+``` yaml
+- stage: QA
+    dependsOn: Build
+    condition: eq(variables['Build.SourceBranchName'], 'develop')
+    jobs:
+    - deployment: QA
+      environment: qa
+      pool:
+        vmImage: 'windows-2019'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: AzureKeyVault@1
+              displayName: 'Load secrets from ${{ parameters.keyVaultName }}'
+              inputs:
+                azureSubscription: Nucleus
+                KeyVaultName: ${{ parameters.keyVaultName }}
+                SecretsFilter: 'NucleusDb,ShipmentsTopicKey,SwaggerClientSecret,ShipmentManagementApiSecret,Smtp--Password,dkim-kelleylogistics'
+
+            - task: KubernetesManifest@0
+              displayName: 'Bake helm chart'
+              name: 'bake'
+              inputs:
+                action: bake
+                helmChart: '$(Pipeline.Workspace)/drop/helm'
+                overrides: |
+                  appName:$(containerRegistryRepo)
+                  imageTag:$(Build.SourceBranchName)$(Build.BuildId)
+                  namespace:${{ parameters.namespace }}
+                  containerRegistryHostName:$(containerRegistryHostName)
+                  environmentName:${{ parameters.environment }}
+                  processScheduledTemplatesApiKey:$(ShipmentManagementApiSecret)
+
+            - task: KubernetesManifest@0
+              displayName: 'Deploy manifests'
+              inputs:
+                action: deploy
+                kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+                namespace: ${{ parameters.namespace }}
+                manifests: '$(bake.manifestsBundle)'
+                imagePullSecrets: |
+                  $(containerRegistryRepo)-imagepullsecret
+```
+
+
+
+In a typical CI/CD process, following the Build stage, you would have one or more release stages
+to deploy your application to various environments (QA, Staging, Production, Demo).  Ideally, the
+release process to each environment is going to be very similar.  To avoid copying the same
+steps over and over, we can leverage another YAML Pipelines feature, Templates.
+
+### Templates
