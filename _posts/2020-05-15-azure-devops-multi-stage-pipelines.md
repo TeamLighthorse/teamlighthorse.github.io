@@ -21,8 +21,7 @@ Azure DevOps Multi-Stage Pipelines help us to check several of those boxes: CI, 
 Multi-Stage Pipelines are defined as a YAML file.  Because a pipeline is just YAML, it can be checked into your
 source control system and versioned just like any other source file.  The
 [YAML schema](https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema%2Cparameter-schema#pipeline-structure)
-for pipelines is very flexible, so can accomodate a variety of CI/CD scenarios.  This post will focus on what
-I feel are the 3 most important sections of a YAML pipeline for CI/CD tasks.
+for pipelines is very powerful and can accomodate a variety of CI/CD scenarios.  This post will dig into 3 of the key parts of a YAML pipeline:
 - trigger
 - variables
 - stages
@@ -86,7 +85,7 @@ For example, you might have a step to build a docker file that references the `d
 
 You may be familiar with many of the above concepts if you have used YAML *builds* in Azure DevOps.
 Multi-stage YAML pipelines take that same YAML foundation and extends it with a new building block, `stages`.
-By introducing `stages`, you can take a automated build process and turn it into a more complete
+By introducing `stages`, you can take an automated build process and turn it into a more complete
 CI/CD solution.
 
 `stages` live at the top of a 3 tiered hierarchy.  A pipeline can have 1 or more `stages`.  Each
@@ -224,7 +223,7 @@ Here we have added another `stage` under the `stages` section of the pipeline.  
 
 `dependsOn` allows you to declare that a stage depends on some other stage completing.  Here we
 are saying that the QA stage depends on the Build stage, meaning that the QA stage should not
-run until after the Build stage has completed.  If the Build stage fails, then we do not want
+run until after the Build stage has completed successfully.  If the Build stage fails, then we do not want
 the QA stage to execute (you would not want to deploy a broken build).
 
 `condition` allows you to control whether a given stage should execute based on some conditional
@@ -304,10 +303,10 @@ scripts. Just as an example, here is what a deployment to a kubernetes cluster m
           deploy:
             steps:
             - task: AzureKeyVault@1
-              displayName: 'Load secrets from ${{ parameters.keyVaultName }}'
+              displayName: 'Load secrets from NucleusQAVault'
               inputs:
                 azureSubscription: Nucleus
-                KeyVaultName: ${{ parameters.keyVaultName }}
+                KeyVaultName: NucleusQAVault
                 SecretsFilter: 'NucleusDb,ShipmentsTopicKey,SwaggerClientSecret,ShipmentManagementApiSecret,Smtp--Password,dkim-kelleylogistics'
 
             - task: KubernetesManifest@0
@@ -319,27 +318,109 @@ scripts. Just as an example, here is what a deployment to a kubernetes cluster m
                 overrides: |
                   appName:$(containerRegistryRepo)
                   imageTag:$(Build.SourceBranchName)$(Build.BuildId)
-                  namespace:${{ parameters.namespace }}
+                  namespace:lighthouse
                   containerRegistryHostName:$(containerRegistryHostName)
-                  environmentName:${{ parameters.environment }}
+                  environmentName:Qa
                   processScheduledTemplatesApiKey:$(ShipmentManagementApiSecret)
 
             - task: KubernetesManifest@0
               displayName: 'Deploy manifests'
               inputs:
                 action: deploy
-                kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
-                namespace: ${{ parameters.namespace }}
+                kubernetesServiceConnection: Lighthouse-Cluster-Qa
+                namespace: lighthouse
                 manifests: '$(bake.manifestsBundle)'
                 imagePullSecrets: |
                   $(containerRegistryRepo)-imagepullsecret
 ```
-
-
 
 In a typical CI/CD process, following the Build stage, you would have one or more release stages
 to deploy your application to various environments (QA, Staging, Production, Demo).  Ideally, the
 release process to each environment is going to be very similar.  To avoid copying the same
 steps over and over, we can leverage another YAML Pipelines feature, Templates.
 
-### Templates
+### [Templates](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops)
+Templates give us a way to re-use sections of a YAML pipeline.  A template can contain a list of stages,
+jobs, and/or steps.  A template can also accept parameters.  The `job` that deploys an application is
+usually a good candidate for templating.  Generally speaking, the steps to release the applcication
+will be the same.  The differences might be things like connections strings and API keys that vary
+based on the target environment.
+
+Lets try to convert the example `job` above to a template.
+
+The first section of a template is the `parameters`.
+
+``` yaml
+parameters:
+- name: 'environment'
+  type: string
+- name: 'keyVaultName'
+  type: string
+- name: 'namespace'
+  type: string
+  default: lighthouse
+- name: 'kubernetesServiceConnection'
+  type: string
+```
+
+A parameter has a name and a
+[type](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#parameter-data-types).
+The type is used to help validate the parameter value passed into a template whenever the template is used.  A parameter can also have
+a default value (like the namespace parameter above).
+
+In this case, I have identified the values from the QA deployment job example that would need to change when deploying to
+different environments, defining parameters for each of those values.
+
+There is a special syntax for referencing a parameter within a template, `${{ parameters.parameterName }}`.  Using this syntax,
+here is how you would convert the QA deployment job above to a template with parameters:
+
+``` yaml
+parameters:
+- name: 'environment'
+  type: string
+- name: 'keyVaultName'
+  type: string
+- name: 'namespace'
+  type: string
+- name: 'kubernetesServiceConnection'
+  type: string
+jobs:
+  - deployment: ${{ parameters.environment }}
+    environment: ${{ parameters.environment }}
+    pool:
+      vmImage: 'windows-2019'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureKeyVault@1
+            displayName: 'Load secrets from ${{ parameters.keyVaultName }}'
+            inputs:
+              azureSubscription: Nucleus
+              KeyVaultName: ${{ parameters.keyVaultName }}
+              SecretsFilter: 'NucleusDb,ShipmentsTopicKey,SwaggerClientSecret,ShipmentManagementApiSecret,Smtp--Password,dkim-kelleylogistics'
+
+          - task: KubernetesManifest@0
+            displayName: 'Bake helm chart'
+            name: 'bake'
+            inputs:
+              action: bake
+              helmChart: '$(Pipeline.Workspace)/drop/helm'
+              overrides: |
+                appName:$(containerRegistryRepo)
+                imageTag:$(Build.SourceBranchName)$(Build.BuildId)
+                namespace:${{ parameters.namespace }}
+                containerRegistryHostName:$(containerRegistryHostName)
+                environmentName:Qa
+                processScheduledTemplatesApiKey:$(ShipmentManagementApiSecret)
+
+          - task: KubernetesManifest@0
+            displayName: 'Deploy manifests'
+            inputs:
+              action: deploy
+              kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+              namespace: ${{ parameters.namespace }}
+              manifests: '$(bake.manifestsBundle)'
+              imagePullSecrets: |
+                $(containerRegistryRepo)-imagepullsecret
+```
