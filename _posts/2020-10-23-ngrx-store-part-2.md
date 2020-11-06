@@ -209,7 +209,7 @@ Then we've exported our actions so that we can dispatch them.
 
 ### Updated states
 
-In part one I had you create a Ingredient.ts class and a recipe.ts class. For simplicity, we are going to combine those classes and add and extra property of an id to both classes so that we can remove that specific recipe. 
+In part one I had you create a Ingredient.ts class and a recipe.ts class. For simplicity, we are going to combine those classes and add an extra property of an id to both classes so that we can remove that specific recipe. 
 Go ahead and remove the ingredient.ts file and update the recipe.ts file to include:
 
 ```ts
