@@ -1,6 +1,6 @@
 ---
 layout: post
-title: NgRx Store Tutorial - Recipe Book
+title: NgRx Store Tutorial - Recipe Book (Part 1)
 tags: [lighthorse, angular, ngrx, typescript, angular cli]
 excerpt_separator: <!--more-->
 author: matthews58
@@ -9,27 +9,56 @@ author: matthews58
 This post will walk you through creating a new Angular Project using NgRx Store.
 
 <!--more-->
+### Intro to Angular CLI
 
+"Angular CLI is a command-line interface tool that you use to initialize, develop, scaffold, and maintain Angular applications directly from a command shell." [Angular CLI](https://angular.io/cli)
+
+Angular CLI makes it easier to work in an Angular environment. It contains a lot of commands that create core building blocks of Angular. 
+For example: 
+  - `ng new projectname` will create an Angular app and install the required dependencies.
+  - `ng generate component componentName` will create a component with componentName.component.ts, componentName.html, componentName.css, and componentName.spec.ts files and it will add the component to the declarations array into the app.module.ts file.
+  - `ng generate service serviceName` will create a service file called serviceName.service.ts.
+  - You can use Angular CLI to generate things like: application, class, component, directive, enum, interface, library, module, pipe, service, etc.
+
+### Install Angular CLI
+
+- Open a terminal window inside VSCode
+  - `npm install -g @angular/cli`
+    - The `-g` flag stands for global-mode, npm will install the package as a global package, which means it goes into a single place in your system. You should install packages globally when it provides an executable command that you run from the shell and it's reused across multiple projects. 
 
 ### Create a new project using Angular CLI
 
 - Open a terminal window inside VSCode
     - `ng new [project name]`
       - You can opt out of Angular routing
+        - For this tutorial purpose we will not be using Angular routing as we will only have one page. If you were to create multiple pages and would like to route or navigate between the pages then you should include Angular routing. Angular routing will add the 'app-routing.module.ts' file to the project. It will also add the 'AppRoutingModule' to the imports array in the app.module.ts file.
       - Choose css for stylesheet format
     - `cd [project name]`
 
 ### Install NgRx Store
 
 - `npm install @ngrx/store`
+  - `npm install` will install the package locally in the directory where you run npm install 'package-name' and the package is put in the `node_modules` folder under this directory.
+- Since we are using Angular CLI 6+ we could also install the latest version of the Store by running the following command:
+  - `ng add @ngrx/store@latest`
+- Both commands above will automate the following steps: 
+  - Update package.json file dependencies array with @ngrx/store.
+  - Run npm install to install those dependencies.
+  - Update your app.module.ts file imports array with StoreModule.forRoot({}).
 
 ### Install Angular Material and Bootstrap for styling
 
+- In Angular 6+ has added a new command `ng add` which uses your package manager and install the dependency. Whereas `npm install` will only install your package into your project but will not configure in order to use.
 - `ng add @angular/material`
   - Choose custom theme
 
-- `npm install --save bootstrap`
-- `npm install --save jquery`
+- ~~`npm install --save bootstrap`~~
+- ~~`npm install --save jquery`~~
+    - The `--save` flag was actually from an older version of npm. Before npm version 5, `--save` would install the package and add the package to the dependencies list in the package-json file. Now with npm 5+ `npm install` will automatically do this.
+
+- Now we can just run:
+  - `npm install bootstrap`
+  - `npm install jquery`
 
 Open angular.json and replace `styles` and `scripts` with this:
 
@@ -68,7 +97,7 @@ export class MaterialModule {}
 Open app.module.ts and import MaterialModule:
 
 ```ts
-import { MaterialModule } from './material-module';
+import { MaterialModule } from 'src/material.module';
 ...
 imports: [
     MaterialModule,
@@ -80,10 +109,11 @@ imports: [
 export class AppModule { }
 ```
 
-### Generate component
+### Generate Recipe component
 
 - `cd src/app/`
 - `ng g c recipe`
+  - Angular CLI has shortcuts where the `g` stands for `generate` and `c` stands for `component`.
 - `cd recipe`
 
 
