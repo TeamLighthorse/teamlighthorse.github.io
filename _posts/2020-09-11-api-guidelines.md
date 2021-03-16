@@ -42,13 +42,13 @@ Specifically, our team has adopted the [HTTP Problem Details](https://tools.ietf
 The guidelines allow for different versioning patterns.  Our team has settled on using an `api-version` parameter
 in either the query string or as a header in the http request:
 
-```
+```curl
 https://api.contoso.com/products?api-version=1.0
 ```
 
 or
 
-```
+```curl
 GET https://api.contoso.com/products
 Host: api.contoso.com
 api-version: 1.0
