@@ -10,19 +10,6 @@
   background: $header-background-color no-repeat;
   background-size: $feature-image-size;
 
-  /* --- Responsive --- */
-  @media screen and (min-width: $break) {
-    background-size: 120% auto;
-  }
-
-  @media screen and (max-width: $break) {
-    background-size: 200% auto;
-  }
-
-  @media screen and (max-width: $sm-break) {
-    background-size: 400% auto;
-  }
-
   //For white images
   p,
   a,
@@ -120,4 +107,8 @@
   .excerpt {
     margin-top: 1em;
   }
+}
+
+.posts-menu {
+  @extend %padding-post;
 }
