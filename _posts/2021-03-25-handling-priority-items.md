@@ -21,16 +21,16 @@ We also discussed having the initial developer responding to the issue be the "p
 - If a team member is working on a high priority item, but needs to step away for whatever reason, they are to hand their item off to someone else.
 - Only post new QA items in team channel
 - If a team member discovers a bug...
-  - But questions the severity, message product owner
-  - Otherwise discuss in refinement and/or stand-up
-- Azure DevOps "Urgent" swim lane will continue be used for items that need immediate attention. Non-immediate bugs will be placed on the board in whichever order the product owner determines is appropriate.
+  - but questions the severity, message product owner
+  - otherwise discuss in refinement and/or stand-up
+- Azure DevOps "Urgent" swim lane will continue to be used for items that need immediate attention. Non-immediate bugs will be placed on the board in whichever order the product owner deems appropriate.
   - Next item up: top of the "Approved" column
 
 **High-Priority Flow**
 1. Product owner creates new bug item in the "Urgent" swim lane, in the "Approved" column.
 2. Product owner sends a new "Urgent" Teams message to the "Urgent Issues" group chat.
 3. A development team member is then expected to acknowledge the message and begin investigation.
-4. This team member should then update team on what they think the issue is, and approx. time to completion.
+4. This team member should then update the team on what they think the issue is, and approx. time to completion.
   - This person will be responsible for providing updates on the issue.
 
 
