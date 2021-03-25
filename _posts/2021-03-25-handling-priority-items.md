@@ -17,7 +17,7 @@ We also discussed having the initial developer responding to the issue be the "p
 
 **Changes to Team Process**
 - Team members are expected to have Teams open throughout the "normal" work day (M-F, 8-5).
-  - If a team member needs to reduce distractions, they are to set their Teams status to "Do Not Disturbe"
+  - If a team member needs to reduce distractions, they are to set their Teams status to "Do Not Disturb"
 - If a team member is working on a high priority item, but needs to step away for whatever reason, they are to hand their item off to someone else.
 - Only post new QA items in team channel
 - If a team member discovers a bug...
