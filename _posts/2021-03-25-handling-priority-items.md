@@ -11,8 +11,6 @@ The team met on Thursday, March 25th, to discuss the handling of high-priority w
 <!--more-->
 
 ### Run Down
-The team met on Thursday, March 25th, to discuss the handling of high-priority work items submitted by customers. We determined that for the most part, our process is fine as is. We did however, determine that it's important to balance the need to "turn off" Teams for distraction purposes as well as ensure SOMEONE "hops" on an issue ASAP.
-
 We determined that when you set your Teams status to "Do Not Disturb", you will still get toast notifications (in addition to emails) when "Urgent" messages come into group chat. So whereas we previously said it was ok to close Teams periodically for concentration purposes, we now say that it is our team's policy to leave Teams open and simply set your status to dnd if you're trying to eliminate distractions.
 
 We also discussed having the initial developer responding to the issue be the "point of contact" for the item for communication purposes. This person will answer status inquiries as well as handing off of said item if need arises.
