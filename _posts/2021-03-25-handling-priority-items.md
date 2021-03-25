@@ -7,6 +7,7 @@ author: footedr
 ---
 The team met on Thursday, March 25th, to discuss the handling of high-priority work items submitted by customers. We determined that for the most part, our process is fine as is. We did however, determine that it's important to balance the need to "turn off" Teams for distraction purposes as well as ensure SOMEONE "hops" on an issue ASAP.
 
+[Continue reading]({% post_url 2021-03-25-handling-priority-items %})
 <!--more-->
 
 ### Run Down
