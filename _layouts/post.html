@@ -10,7 +10,7 @@ comments: true
 
   <div class="fluid-container">
     <div class="row">
-      <div class="col-9">
+      <div class="col-md-9">
         <article {% if page.feature-img or page.color %}class="feature-image" {% endif %}>
           <header id="main">
             {% unless page.hide_title %}
@@ -37,7 +37,7 @@ comments: true
         
         </article>
       </div>
-      <aside class="col-3" style="background-color: lightgrey;">
+      <aside class="col-md-3">
         {% include sidebar.html %}
       </aside>
     </div>

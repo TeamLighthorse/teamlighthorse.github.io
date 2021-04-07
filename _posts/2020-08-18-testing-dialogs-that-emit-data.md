@@ -35,7 +35,7 @@ _Disclaimer: in the world of Lighthouse, the terms "line item" and "commodity" a
 
 Our template contains an *ngFor directive that loops through the line items and displays each one as a tile.
 
-```
+```hbs
 <div class="lh-tile-row">
   <div class="card lh-tile"
     *ngFor="let lineItem of lineItems; index as i; count as numItems">
@@ -75,7 +75,7 @@ If we look closely at `div.lh-tile__content`, which is the content inside the ti
 
 In the component class:
 
-```
+```ts
 openEditLineItemsDialog(lineItem?: LineItem): void {
     if (!this.isEditable) { return; }
 
@@ -113,7 +113,7 @@ First let's test that the opening of the dialog actually occurs and passes in th
 
 In the following, `testLineItemsInfo` is some test data we created and imported during the setup of the spec file.
 
-```
+```ts
 it('should open the dialog and pass in the line item to edit', () => {
     const testLineItem = testLineItemsInfo.lineItems[0];
 
@@ -137,7 +137,7 @@ it('should open the dialog and pass in the line item to edit', () => {
 
 Next, we will test that we are properly reacting to the dialog's `dialogEditSuccess` emission by manually call it from within the test:
 
-```
+```ts
 it('should emit the editLineItemsSuccess event when complete', () => {
     // spy on the event emission that the parent should call after it receives the dialog's event emission
     const editSuccessSpy = spyOn(component.editLineItemsSuccess, 'emit');
@@ -152,7 +152,7 @@ it('should emit the editLineItemsSuccess event when complete', () => {
 
 You could also test for a dialog emission that contains data by adding that as an argument to `dialogEditSuccess.emit()`, such as in the following:
 
-```
+```ts
 // component class subscription
 const editSuccess = this.editLineItemsDialogRef.componentInstance.dialogEditSuccess
     .subscribe((value: number) => this.editLineItemsSuccess.emit(value));
@@ -160,7 +160,7 @@ const editSuccess = this.editLineItemsDialogRef.componentInstance.dialogEditSucc
 
 ...and then in the spec file:
 
-```
+```ts
 it('should emit the editLineItemsSuccess event when complete', () => {
     const editSuccessSpy = spyOn(component.editLineItemsSuccess, 'emit');
 

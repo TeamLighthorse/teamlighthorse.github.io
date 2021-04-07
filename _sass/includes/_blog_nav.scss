@@ -1,11 +1,8 @@
 /* --- Pagination --- */
 .pagination {
   @extend %padding-nav;
-  display: inline-block;
-  text-align: center;
-  //margin-bottom: 2em;
-  width: 100%;
-  clear: both;
+  align-items: center;
+  justify-content: center;
 
   &:before {
     content: '';
@@ -15,8 +12,7 @@
   }
 
   .page_number {
-    display: inline-block;
-    vertical-align: sub;
+    margin: 0 10px;
 
     @media (max-width: $x-sm-break) {
       display: none;
@@ -38,11 +34,4 @@
     }
   }
 
-  .previous {
-    float: left;
-  }
-
-  .next {
-    float: right;
-  }
 }

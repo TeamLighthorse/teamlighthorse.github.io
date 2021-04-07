@@ -31,7 +31,7 @@ Once these steps have been completed, follow these instructions to build and run
 - Add any metadata that you may want
 
 Example
-```
+```yaml
 ---
 layout: post
 title: Welcome to Lighthorse!
