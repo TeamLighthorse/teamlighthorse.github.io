@@ -50,7 +50,7 @@ Observables are the heart of the reactive programming paradigm in that we cannot
 
 Operators form a pipeline of actions, with each operator passing it's result to the next operator in the pipeline. In the following example, think of beltOfDonuts as an observable:
 
-```
+```ts
 beltOfDonuts()
     .pipe(
         filter(donut => donut.isNotBroken()),
@@ -68,7 +68,7 @@ We aren't done quite yet. Ultimately, no one can eat these donuts with a subscri
 
 Subscriptions consume the end result, often called an emission. In fact, without a subscription our application never sees the result of the beltOfDonuts observable pipeline. Let's add a subscription to beltOfDonuts:
 
-```
+```ts
 beltOfDonuts()
     .pipe(
         filter(donut => donut.isNotBroken()),
@@ -83,7 +83,7 @@ beltOfDonuts()
 
 In this example, we will continue getting boxes of 12 sprinkled donuts for as long as beltOfDonuts keeps giving them to us. Many observables have an onCompleted method that tells the pipeline and subscription that there is no more emissions. However, there are also many observables that do not have an onCompleted method and will keep the faucet on ad infinitum. This could cause memory leaks or unwanted side effects in our application if we leave a bunch of unused subscriptions lying around. Luckily, we can easily unsubscribe to these when we are finished:
 
-```
+```ts
 const donutSubscription = beltOfDonuts()
     .pipe(
         filter(donut => donut.isNotBroken()),
@@ -108,7 +108,7 @@ Next, let's take a closer look at the three possible outcomes of any given obser
 
 In our previous example, we only show what happens onNext which is we get a box of donuts. 
 
-```
+```ts
 .subscribe((boxOfDonuts: Donut[]) => {
     const myDonuts = boxOfDonuts;
 });
@@ -118,7 +118,7 @@ But what happens if something goes wrong like the donut belt stops working or th
 
 We can supplement our subscription callback, the onNext, with an optional onError path and also an onComplete path if we want something to happen when and if the observable completes:
 
-```
+```ts
 .subscribe(
     (boxOfDonuts: Donut[]) => {
         const myDonuts = boxOfDonuts;
@@ -155,7 +155,7 @@ Thus far we have explored reactive programming in the context of JavaScript ([Ty
 
 Let's take a look an enhanced version of our beltOfDonuts example that does a better job of emulating a subscription that receives a box of 12 donuts.
 
-```
+```ts
 beltOfDonuts()
     .pipe(
         filter(donut => donut.isNotBroken()),
@@ -178,13 +178,13 @@ beltOfDonuts()
 
 In this example, we scrapped the take(12) operator for a scan operator instead. If you recall from earlier, take(12) will take 12 donuts and complete. Therefore, our subscription will only receive a single box of donuts. The use of scan here:
 
-```
+```ts
 scan((donuts, donut, index) => (index % 12) ? donuts.concat(donut) : [donut])
 ```
 
 works much like a reducer in that it will accumulate donuts until it gets to 12 (`index % 12`) and then initialize a new box with a single donut in it. We are using a bit of digital smoke and mirrors here because scan will emit a box with one donut, then a box with two donuts, _10 passes later_... then a box with twelve donuts, then a box with one donut... and so on. To emulate that our subscription only gets a box of 12 donuts, we utilize the filter operator, which will discard any box that has less than 12 donuts. Blasphemy, I know!:
 
-```
+```ts
 filter(donuts => donuts.length === 12)
 ```
 
@@ -210,7 +210,7 @@ There are scenarios where there is simply no emission from an observable but we 
 
 We got a taste of the `take` operator earlier with our first iteration of `beltOfDonuts`. This one is pretty straight-forward in that it will "take" x number of emissions and then complete the observable, ignoring any subsequent emissions. There are a few other operators analogous to take. If you don't want to set a static number of emissions to take but would rather utilize some condition to predicate the completion of the observable, you could use `takeUntil` or `takeWhile`.
 
-```
+```ts
 takeUntil(() => customerOrderFulfilled)
 
 takeWhile(() => !customerOrderFulfilled)
