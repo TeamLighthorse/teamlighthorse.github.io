@@ -17,13 +17,13 @@ Once you have the Azure CLI installed (and if you have a command line session op
 Once you have logged in, you can request credentials to the AKS cluster for which you would like to view logs. You do this by executing the following command: `az aks get-credentials -g RESOURCE-GROUP-NAME -n AKS-CLUSTER-NAME`.
 
 ***For Qa:***
-`az aks get-credentials -g lighthouse-core-qa -n lighthouse-cluster-qa
+`az aks get-credentials -g lighthouse-core-qa -n lighthouse-cluster-qa`
 
 ***For Staging & Demo:***
-`az aks get-credentials -g lighthouse-core-stag -n lighthouse-cluster-stag
+`az aks get-credentials -g lighthouse-core-stag -n lighthouse-cluster-stag`
 
 ***For Production:***
-`az aks get-credentials -g lighthouse-core-prod -n lighthouse-cluster-prod
+`az aks get-credentials -g lighthouse-core-prod -n lighthouse-cluster-prod`
 
 **Access Pod Logs**
 Once you have credentials for accessing the AKS cluster, you can pull logs by executing the following command: `kubectl logs PODNAME -n NAMESPACE --timestamps=true`. This command requires you to have Docker Desktop installed and Kubernetes running locally.
